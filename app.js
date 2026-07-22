@@ -1419,40 +1419,67 @@ function initProfileListeners() {
 
 function calculateBodyMetrics(age, sex, height, weight, waist, neck, hip, activity) {
     const heightM = height / 100;
-    const bmi = weight / (heightM * heightM);
+    const bmi = weight / (heightM * heightM); // Standard BMI = kg / m^2 (WHO)
 
+    // Body fat % — US Navy Circumference Method (Hodgdon & Beckett, 1984).
+    // Requires waist + neck (+ hip for women). Validated against hydrostatic
+    // weighing with a typical error margin of about ±3-4% body fat.
     let bf = 0;
+    let bfValid = false;
     if (sex === "male") {
         const val = waist - neck;
-        if (val > 0) {
+        if (val > 0 && height > 0) {
             bf = 495 / (1.0324 - 0.19077 * Math.log10(val) + 0.15456 * Math.log10(height)) - 450;
+            bfValid = true;
         }
     } else {
         const val = waist + hip - neck;
-        if (val > 0) {
+        if (val > 0 && height > 0) {
             bf = 495 / (1.29579 - 0.35004 * Math.log10(val) + 0.22100 * Math.log10(height)) - 450;
+            bfValid = true;
         }
     }
-    
+
     bf = Math.max(2, Math.min(60, bf));
-    const lbm = weight * (1 - bf / 100);
-    const idealMin = 18.5 * (heightM * heightM);
+    const lbm = weight * (1 - bf / 100); // Lean Body Mass = Weight - Fat Mass
+    const idealMin = 18.5 * (heightM * heightM); // WHO "normal" BMI band
     const idealMax = 24.9 * (heightM * heightM);
 
+    // BMR (Basal Metabolic Rate):
+    // - If we have a real body-fat measurement, use Katch-McArdle, which is
+    //   driven by lean body mass — it's more accurate for people with known
+    //   body composition because it doesn't treat 1kg of muscle and 1kg of
+    //   fat as burning the same calories (Katch & McArdle, 1996).
+    //   BMR = 370 + 21.6 × LBM(kg)
+    // - Otherwise fall back to Mifflin-St Jeor (1990), the equation the
+    //   Academy of Nutrition and Dietetics currently recommends as the most
+    //   accurate weight-based estimate when body composition isn't known.
     let bmr = 0;
-    if (sex === "male") {
+    let bmrFormula = "";
+    if (bfValid) {
+        bmr = 370 + 21.6 * lbm;
+        bmrFormula = "Katch-McArdle formula, using your measured lean body mass";
+    } else if (sex === "male") {
         bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+        bmrFormula = "Mifflin-St Jeor formula, using total body weight (add waist & neck for a body-fat-based estimate)";
     } else {
         bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+        bmrFormula = "Mifflin-St Jeor formula, using total body weight (add waist, neck & hip for a body-fat-based estimate)";
     }
+
+    // TDEE = BMR × activity multiplier (Harris-Benedict activity scale, in
+    // standard clinical/nutrition use since the 1980s).
     const tdee = bmr * parseFloat(activity);
 
     return {
         bmi: Math.round(bmi * 10) / 10,
         bf: Math.round(bf * 10) / 10,
+        bfValid,
         lbm: Math.round(lbm * 10) / 10,
         idealMin: Math.round(idealMin * 10) / 10,
         idealMax: Math.round(idealMax * 10) / 10,
+        bmr: Math.round(bmr),
+        bmrFormula,
         tdee: Math.round(tdee)
     };
 }
@@ -1550,6 +1577,8 @@ function updateProfileTab() {
     document.getElementById("res-bmi").textContent = state.userProfile.bmi;
     document.getElementById("res-bf").textContent = `${state.userProfile.bf}%`;
     document.getElementById("res-tdee").textContent = state.userProfile.tdee;
+    document.getElementById("res-bmr").textContent = state.userProfile.bmr || "--";
+    document.getElementById("res-bmr-formula-note").textContent = state.userProfile.bmrFormula || "";
     document.getElementById("res-lbm").textContent = `${state.userProfile.lbm} kg`;
     document.getElementById("res-ideal-range").textContent = `${state.userProfile.idealMin} - ${state.userProfile.idealMax} kg`;
 
