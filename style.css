@@ -1829,26 +1829,38 @@ select option {
 
 /* Mobile screens (Width < 768px) */
 @media (max-width: 768px) {
-    /* Morph Sidebar to Sticky Bottom Navigation Bar */
+    .app-layout {
+        flex-direction: column;
+    }
+
+    /* Morph Sidebar to Sticky TOP Navigation Bar.
+       NOTE: position:fixed is unreliable inside many in-app WebViews
+       (Telegram, Instagram, etc.) — it can render pinned to the wrong
+       edge or overlap page content when the browser chrome resizes the
+       viewport. position:sticky avoids that entirely because it stays
+       in normal document flow, so content can never be hidden behind it. */
     .app-nav {
-        position: fixed;
-        bottom: 0;
+        position: sticky;
+        top: 0;
         left: 0;
         width: 100%;
         height: 64px;
         flex-direction: row;
         padding: 0.2rem 1rem;
+        padding-top: calc(0.2rem + env(safe-area-inset-top, 0px));
+        height: calc(64px + env(safe-area-inset-top, 0px));
         border-right: none;
-        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
         background-color: rgba(10, 10, 10, 0.95);
         backdrop-filter: blur(14px);
         align-items: center;
         justify-content: space-around;
-        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+        z-index: 500;
     }
 
     .nav-brand {
-        display: none; /* Hide brand logo on bottom bar */
+        display: none; /* Hide brand logo on top bar */
     }
 
     .nav-links {
@@ -1889,14 +1901,15 @@ select option {
     }
 
     .nav-footer {
-        display: none; /* Hide Demon Mode footer on bottom bar (can be toggled from profile or home header) */
+        display: none; /* Hide Demon Mode footer on top bar (can be toggled from profile or home header) */
     }
 
-    /* Shift content window around bottom bar */
+    /* Content now flows naturally below the sticky top bar — no manual
+       offset needed since sticky elements occupy real document space. */
     .main-content {
-        padding: 1.25rem 1rem 5.5rem 1rem;
+        padding: 1.25rem 1rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1rem;
         height: auto;
-        min-height: calc(100vh - 64px);
+        min-height: auto;
     }
 
     /* Stack grid systems */
