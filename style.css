@@ -1112,6 +1112,12 @@ p {
     font-weight: 600;
 }
 
+.food-btn-item .serving {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+
 .food-btn-item .cal {
     font-size: 0.7rem;
     color: var(--primary);
@@ -1120,6 +1126,13 @@ p {
 
 .food-btn-item.specialty .cal {
     color: var(--secondary);
+}
+
+.food-db-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin: -0.25rem 0 1rem 0;
 }
 
 .inline-adder-row {
