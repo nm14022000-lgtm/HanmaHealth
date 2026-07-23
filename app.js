@@ -59,7 +59,12 @@ let state = {
         lastLogDate: "2026-07-21"
     },
     settings: {
-        skinTheme: "classic" // classic (lime) or demon (red)
+        skinTheme: "classic", // classic (lime) or demon (red)
+        waterReminders: {
+            enabled: false,
+            intervalMinutes: 120,
+            lastNotifiedAt: 0
+        }
     }
 };
 
@@ -198,6 +203,11 @@ document.addEventListener("DOMContentLoaded", () => {
     initModalListeners();
     initAuthForms();
     initFirebaseSync();
+    initWaterTrackerListeners();
+
+    if (state.settings.waterReminders.enabled && "Notification" in window && Notification.permission === "granted") {
+        startWaterReminderTimer();
+    }
 
     // Render Initial UI
     applyThemeSkin();
@@ -1071,6 +1081,152 @@ function updateNutritionTab() {
     document.getElementById("macro-fat-val").textContent = `${Math.round(fat)}g / ${targetFat}g`;
 
     renderLoggedFoods();
+    renderWaterTracker();
+}
+
+// -------------------------------------------------------------
+// WATER INTAKE TRACKER
+// -------------------------------------------------------------
+// Formula: 33 ml per kg body weight (midpoint of the 30-35 ml/kg adult
+// maintenance band used by IOM/Mayo Clinic-cited guidance), plus ~12 ml per
+// minute of logged exercise that day (matching the commonly-cited ~355 ml
+// per 30 min of activity), plus a fixed hot-climate allowance since this
+// app is built for Bangladesh, where daytime heat regularly exceeds the
+// 30°C/86°F threshold hydration guidance flags for extra fluid intake.
+const WATER_ML_PER_KG = 33;
+const WATER_ML_PER_EXERCISE_MIN = 12;
+const WATER_CLIMATE_BONUS_ML = 500;
+
+function calculateWaterTargetMl() {
+    const weight = (state.userProfile && state.userProfile.weight) ? state.userProfile.weight : 70;
+    const log = state.dailyLogs[selectedDate];
+    const exerciseMinutes = log ? sumWorkoutsDuration(log) : 0;
+
+    const base = weight * WATER_ML_PER_KG;
+    const exerciseBonus = exerciseMinutes * WATER_ML_PER_EXERCISE_MIN;
+
+    return Math.round(base + exerciseBonus + WATER_CLIMATE_BONUS_ML);
+}
+
+function renderWaterTracker() {
+    const fillEl = document.getElementById("water-bar-fill");
+    const consumedEl = document.getElementById("water-consumed-val");
+    const targetEl = document.getElementById("water-target-val");
+    if (!fillEl || !consumedEl || !targetEl) return;
+
+    const log = state.dailyLogs[selectedDate];
+    const consumed = log ? (log.water || 0) : 0;
+    const target = calculateWaterTargetMl();
+    const pct = Math.min(100, Math.round((consumed / target) * 100));
+
+    fillEl.style.width = `${pct}%`;
+    consumedEl.textContent = consumed;
+    targetEl.textContent = target;
+
+    fillEl.classList.toggle("goal-met", consumed >= target);
+}
+
+function addWaterMl(ml) {
+    ensureDayLogsExist(selectedDate);
+    state.dailyLogs[selectedDate].water += ml;
+    saveState();
+    renderWaterTracker();
+    handleStreakIncrement(selectedDate);
+}
+
+function initWaterTrackerListeners() {
+    document.querySelectorAll(".water-add-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const ml = parseInt(btn.dataset.ml, 10);
+            if (!isNaN(ml)) addWaterMl(ml);
+        });
+    });
+
+    const reminderToggle = document.getElementById("btn-water-reminder-toggle");
+    if (reminderToggle) {
+        reminderToggle.addEventListener("click", toggleWaterReminders);
+    }
+
+    updateWaterReminderStatusUI();
+}
+
+// --- Water reminder notifications ---
+// IMPORTANT (honest limitation): this uses the browser's Notification API
+// with an in-page timer. It reliably reminds you while this site/tab is
+// open (and on many Android/desktop browsers, for a while after it's
+// backgrounded). It is NOT a true server-push notification that fires
+// when the browser is fully closed — that needs a backend (e.g. Firebase
+// Cloud Messaging + a scheduled Cloud Function), which requires separate
+// server setup and billing beyond this static site.
+let waterReminderTimer = null;
+
+function toggleWaterReminders() {
+    const settings = state.settings.waterReminders;
+
+    if (!settings.enabled) {
+        if (!("Notification" in window)) {
+            alert("This browser doesn't support notifications.");
+            return;
+        }
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                settings.enabled = true;
+                settings.lastNotifiedAt = Date.now();
+                saveState();
+                startWaterReminderTimer();
+                updateWaterReminderStatusUI();
+                new Notification("Hanma Gym 💧", { body: "Water reminders are on. We'll nudge you every 2 hours." });
+            } else {
+                alert("Notification permission was not granted, so reminders can't be turned on.");
+            }
+        });
+    } else {
+        settings.enabled = false;
+        saveState();
+        stopWaterReminderTimer();
+        updateWaterReminderStatusUI();
+    }
+}
+
+function updateWaterReminderStatusUI() {
+    const statusEl = document.getElementById("water-reminder-status");
+    const btnIcon = document.querySelector("#btn-water-reminder-toggle i");
+    if (!statusEl) return;
+
+    const enabled = state.settings.waterReminders.enabled;
+    statusEl.textContent = enabled ? "Reminders on — every 2 hours while this app is open" : "Reminders off";
+    if (btnIcon) {
+        btnIcon.setAttribute("data-lucide", enabled ? "bell-ring" : "bell-off");
+        initLucideIcons();
+    }
+}
+
+function startWaterReminderTimer() {
+    stopWaterReminderTimer();
+    // Check every minute; fire when the configured interval has elapsed.
+    waterReminderTimer = setInterval(() => {
+        const settings = state.settings.waterReminders;
+        if (!settings.enabled) return;
+
+        const hour = new Date().getHours();
+        const withinWakingHours = hour >= 7 && hour <= 23; // avoid overnight pings
+
+        const elapsedMs = Date.now() - (settings.lastNotifiedAt || 0);
+        const intervalMs = (settings.intervalMinutes || 120) * 60 * 1000;
+
+        if (withinWakingHours && elapsedMs >= intervalMs && Notification.permission === "granted") {
+            new Notification("Time to hydrate 💧", { body: "It's been a while — drink some water and log it in Hanma Gym." });
+            settings.lastNotifiedAt = Date.now();
+            saveState();
+        }
+    }, 60 * 1000);
+}
+
+function stopWaterReminderTimer() {
+    if (waterReminderTimer) {
+        clearInterval(waterReminderTimer);
+        waterReminderTimer = null;
+    }
 }
 
 // -------------------------------------------------------------
@@ -1647,8 +1803,12 @@ function ensureDayLogsExist(dateStr) {
             lunch: [],
             dinner: [],
             snacks: [],
-            workouts: []
+            workouts: [],
+            water: 0
         };
+    }
+    if (state.dailyLogs[dateStr].water === undefined) {
+        state.dailyLogs[dateStr].water = 0;
     }
 }
 
