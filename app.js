@@ -254,6 +254,41 @@ function loadStateFromStorage() {
             }
         }
     }
+
+    ensureStateDefaults();
+}
+
+// Backfills any nested fields that might be missing from an older saved
+// state (e.g. a user's data saved before a newer feature was added). This
+// runs every load so the app can never crash just because a saved object
+// predates a newer field — it always merges forward instead of assuming
+// the loaded state has every field the current code expects.
+function ensureStateDefaults() {
+    if (!state.settings) state.settings = {};
+    if (!state.settings.skinTheme) state.settings.skinTheme = "classic";
+    if (!state.settings.waterReminders) {
+        state.settings.waterReminders = { enabled: false, intervalMinutes: 120, lastNotifiedAt: 0 };
+    } else {
+        if (typeof state.settings.waterReminders.enabled !== "boolean") state.settings.waterReminders.enabled = false;
+        if (!state.settings.waterReminders.intervalMinutes) state.settings.waterReminders.intervalMinutes = 120;
+        if (!state.settings.waterReminders.lastNotifiedAt) state.settings.waterReminders.lastNotifiedAt = 0;
+    }
+
+    if (!state.dailyLogs) state.dailyLogs = {};
+    for (const dateKey in state.dailyLogs) {
+        const log = state.dailyLogs[dateKey];
+        if (log.water === undefined) log.water = 0;
+        if (!log.breakfast) log.breakfast = [];
+        if (!log.lunch) log.lunch = [];
+        if (!log.dinner) log.dinner = [];
+        if (!log.snacks) log.snacks = [];
+        if (!log.workouts) log.workouts = [];
+    }
+
+    if (!state.userProfile) state.userProfile = { age: 28, sex: "male", height: 170, weight: 78, tdee: 2400 };
+    if (!state.weightPlanner) state.weightPlanner = { targetWeight: 70, timelineMonths: 3, isCustomTimeline: false, calorieBudget: 2100, favoriteFoods: [], cheatFood: "Tehari" };
+    if (!state.progressHistory) state.progressHistory = [];
+    if (!state.streak) state.streak = { currentStreak: 0, loggedDaysCount: 0, lastLogDate: "" };
 }
 
 function saveState() {
