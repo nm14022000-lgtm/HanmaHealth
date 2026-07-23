@@ -324,6 +324,37 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="glass-card water-tracker-card" style="margin-top: 1.5rem;">
+                            <div class="card-title-row">
+                                <h4><i data-lucide="droplet"></i> Water Intake</h4>
+                                <button class="icon-btn" id="btn-water-reminder-toggle" title="Toggle water reminders">
+                                    <i data-lucide="bell-off"></i>
+                                </button>
+                            </div>
+                            <div class="divider"></div>
+
+                            <div class="water-progress-row">
+                                <div class="water-bar-track">
+                                    <div class="water-bar-fill" id="water-bar-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="water-progress-text"><strong id="water-consumed-val">0</strong> / <span id="water-target-val">2400</span> ml</span>
+                            </div>
+
+                            <div class="water-quick-add-row">
+                                <button class="btn btn-secondary water-add-btn" data-ml="250">
+                                    <i data-lucide="cup-soda"></i> Glass (250ml)
+                                </button>
+                                <button class="btn btn-secondary water-add-btn" data-ml="500">
+                                    <i data-lucide="cup-soda"></i> Bottle (500ml)
+                                </button>
+                                <button class="btn btn-secondary water-add-btn" data-ml="1000">
+                                    <i data-lucide="cup-soda"></i> 1L
+                                </button>
+                            </div>
+
+                            <p class="sub" id="water-reminder-status" style="margin-top: 0.75rem;">Reminders off</p>
+                        </div>
                     </div>
 
                     <!-- Right Column: Foods logging panel -->
