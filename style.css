@@ -22,7 +22,9 @@
     --secondary-glow: rgba(99, 102, 241, 0.2);
 
     /* Stats colors */
-    --orange: #f97316;
+    --orange: #fe552b;
+    --orange-glow: rgba(254, 85, 43, 0.28);
+    --yellow: #ffc700;
     --purple: #a855f7;
     --blue: #0ea5e9;
     
@@ -33,6 +35,9 @@
     --danger-bg: rgba(239, 68, 68, 0.08);
 
     --font-family: 'Outfit', sans-serif;
+    --font-display: 'Tilt Warp', 'Outfit', sans-serif;
+    --font-heading: 'Amaranth', 'Outfit', sans-serif;
+    --radius-chunky: 22px;
     --sidebar-width: 260px;
 }
 
@@ -344,14 +349,23 @@ body {
 }
 
 /* Typography elements */
-h1, h2, h3, h4 {
+h1, h2 {
     color: var(--text-primary);
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+
+h3, h4 {
+    color: var(--text-primary);
+    font-family: var(--font-heading);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     line-height: 1.2;
 }
 
-h2 { font-size: 1.75rem; }
+h2 { font-size: 1.85rem; }
 h3 { font-size: 1.3rem; }
 h4 { font-size: 1rem; }
 
@@ -381,9 +395,9 @@ p {
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-family: var(--font-family);
-    font-size: 0.85rem;
+    border-radius: 16px;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     border: none;
@@ -487,7 +501,7 @@ p {
 .glass-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 18px;
+    border-radius: var(--radius-chunky);
     padding: 1.5rem;
     height: 100%;
 }
@@ -711,14 +725,24 @@ p {
 }
 
 .section-tag {
+    display: inline-flex;
+    width: fit-content;
+    font-family: var(--font-heading);
     font-size: 0.65rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--primary);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
+    background-color: rgba(132, 204, 22, 0.12);
+    border: 1px solid rgba(132, 204, 22, 0.25);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.5rem;
 }
 
 .workout-action-card h3 {
-    font-size: 1.75rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 2rem;
     color: #fff;
     margin-top: 0.25rem;
 }
