@@ -39,6 +39,10 @@
                     <i data-lucide="apple"></i>
                     <span>Nutrition</span>
                 </button>
+                <button class="nav-tab-btn" data-target="tab-hydration">
+                    <i data-lucide="droplet"></i>
+                    <span>Hydration</span>
+                </button>
                 <button class="nav-tab-btn" data-target="tab-progress">
                     <i data-lucide="trending-up"></i>
                     <span>Progress</span>
@@ -324,39 +328,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="glass-card water-tracker-card" style="margin-top: 1.5rem;">
-                            <div class="card-title-row">
-                                <h4 style="color: var(--cyan);"><i data-lucide="droplet"></i> Hydration</h4>
-                                <button class="icon-btn" id="btn-water-reminder-toggle" title="Toggle water reminders">
-                                    <i data-lucide="bell-off"></i>
-                                </button>
-                            </div>
-                            <div class="divider"></div>
-
-                            <div class="water-volume-counter">
-                                <strong id="water-consumed-val">0</strong>ml
-                                <span>/ <span id="water-target-val">2400</span>ml</span>
-                            </div>
-
-                            <div class="water-led-row" id="water-led-row">
-                                <!-- 8 LED blocks injected by JS -->
-                            </div>
-
-                            <div class="water-quick-add-row">
-                                <button class="water-add-btn" data-ml="250">
-                                    <i data-lucide="plus"></i> 250ML
-                                </button>
-                                <button class="water-add-btn" data-ml="500">
-                                    <i data-lucide="plus"></i> 500ML
-                                </button>
-                                <button class="water-add-btn" data-ml="1000">
-                                    <i data-lucide="plus"></i> 1.0L
-                                </button>
-                            </div>
-
-                            <p class="sub" id="water-reminder-status" style="margin-top: 0.75rem;">Reminders off</p>
-                        </div>
                     </div>
 
                     <!-- Right Column: Foods logging panel -->
@@ -505,6 +476,108 @@
                                 <ul class="logged-items-list" id="logged-foods-list-container">
                                     <li class="empty-list-placeholder">No food logged.</li>
                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ------------------------------------------------------------- -->
+            <!-- TAB: HYDRATION -->
+            <!-- ------------------------------------------------------------- -->
+            <div class="app-tab-panel" id="tab-hydration" style="display: none;">
+                <header class="tab-header">
+                    <div>
+                        <span class="sub">Fluid Tracker</span>
+                        <h2 style="color: var(--cyan);">Hydration</h2>
+                    </div>
+                </header>
+
+                <div class="hydration-grid-v4">
+                    <!-- Left Column: Tracker + Calculator -->
+                    <div class="nutrition-card-column">
+                        <div class="glass-card water-tracker-card">
+                            <div class="card-title-row">
+                                <h4 style="color: var(--cyan);"><i data-lucide="droplet"></i> Today's Intake</h4>
+                                <button class="icon-btn" id="btn-water-reminder-toggle" title="Toggle water reminders">
+                                    <i data-lucide="bell-off"></i>
+                                </button>
+                            </div>
+                            <div class="divider"></div>
+
+                            <div class="water-volume-counter">
+                                <strong id="water-consumed-val">0</strong>ml
+                                <span>/ <span id="water-target-val">2400</span>ml</span>
+                            </div>
+
+                            <div class="water-led-row" id="water-led-row">
+                                <!-- 8 LED blocks injected by JS -->
+                            </div>
+
+                            <div class="water-quick-add-row">
+                                <button class="water-add-btn" data-ml="250">
+                                    <i data-lucide="plus"></i> 250ML
+                                </button>
+                                <button class="water-add-btn" data-ml="500">
+                                    <i data-lucide="plus"></i> 500ML
+                                </button>
+                                <button class="water-add-btn" data-ml="750">
+                                    <i data-lucide="plus"></i> 750ML
+                                </button>
+                                <button class="water-add-btn" data-ml="1000">
+                                    <i data-lucide="plus"></i> 1.0L
+                                </button>
+                            </div>
+
+                            <div class="water-reminder-settings">
+                                <p class="sub" id="water-reminder-status" style="margin: 0;">Reminders off</p>
+                                <div class="reminder-interval-row" id="reminder-interval-row">
+                                    <button class="interval-pill" data-mins="60">1 HR</button>
+                                    <button class="interval-pill active" data-mins="120">2 HR</button>
+                                    <button class="interval-pill" data-mins="180">3 HR</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card water-calc-card" style="margin-top: 1.5rem;">
+                            <div class="card-title-row">
+                                <h4><i data-lucide="calculator"></i> Daily Water Requirement</h4>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="water-calc-breakdown">
+                                <div class="calc-row">
+                                    <span>Base (weight × 33ml/kg)</span>
+                                    <strong id="calc-water-base">0 ml</strong>
+                                </div>
+                                <div class="calc-row">
+                                    <span>Exercise bonus (today)</span>
+                                    <strong id="calc-water-exercise">+0 ml</strong>
+                                </div>
+                                <div class="calc-row">
+                                    <span>Bangladesh climate bonus</span>
+                                    <strong id="calc-water-climate">+500 ml</strong>
+                                </div>
+                                <div class="calc-row calc-row-total">
+                                    <span>Today's Target</span>
+                                    <strong id="calc-water-total">0 ml</strong>
+                                </div>
+                            </div>
+                            <p class="sub" style="margin-top: 0.85rem; text-transform: none; letter-spacing: normal; font-weight: 400; line-height: 1.5;">
+                                Base uses the 30-35 ml/kg adult hydration range (IOM/Mayo-referenced). Exercise bonus is ~12ml per minute logged today. Climate bonus is fixed since this app is tuned for Bangladesh's heat.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Daily Hydration History -->
+                    <div class="nutrition-card-column">
+                        <div class="glass-card daily-history-card">
+                            <div class="card-title-row">
+                                <h4><i data-lucide="history"></i> Hydration History</h4>
+                                <span class="sub" id="water-history-count">0 days logged</span>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="daily-history-list" id="water-history-list">
+                                <!-- Injected dynamically -->
                             </div>
                         </div>
                     </div>
