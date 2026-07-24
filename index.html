@@ -173,7 +173,7 @@
 
                             <div class="workout-card-overlay"></div>
                             <div class="workout-card-content">
-                                <span class="section-tag">TODAY'S WORKOUT</span>
+                                <span class="section-tag"><span class="pulse-dot"></span>TODAY'S WORKOUT</span>
                                 <h3 id="home-workout-title">Push Day</h3>
                                 <p class="desc" id="home-workout-desc">Chest, Shoulders, Triceps</p>
                                 <div class="card-meta-row">
@@ -327,29 +327,31 @@
 
                         <div class="glass-card water-tracker-card" style="margin-top: 1.5rem;">
                             <div class="card-title-row">
-                                <h4><i data-lucide="droplet"></i> Water Intake</h4>
+                                <h4 style="color: var(--cyan);"><i data-lucide="droplet"></i> Hydration</h4>
                                 <button class="icon-btn" id="btn-water-reminder-toggle" title="Toggle water reminders">
                                     <i data-lucide="bell-off"></i>
                                 </button>
                             </div>
                             <div class="divider"></div>
 
-                            <div class="water-progress-row">
-                                <div class="water-bar-track">
-                                    <div class="water-bar-fill" id="water-bar-fill" style="width: 0%"></div>
-                                </div>
-                                <span class="water-progress-text"><strong id="water-consumed-val">0</strong> / <span id="water-target-val">2400</span> ml</span>
+                            <div class="water-volume-counter">
+                                <strong id="water-consumed-val">0</strong>ml
+                                <span>/ <span id="water-target-val">2400</span>ml</span>
+                            </div>
+
+                            <div class="water-led-row" id="water-led-row">
+                                <!-- 8 LED blocks injected by JS -->
                             </div>
 
                             <div class="water-quick-add-row">
-                                <button class="btn btn-secondary water-add-btn" data-ml="250">
-                                    <i data-lucide="cup-soda"></i> Glass (250ml)
+                                <button class="water-add-btn" data-ml="250">
+                                    <i data-lucide="plus"></i> 250ML
                                 </button>
-                                <button class="btn btn-secondary water-add-btn" data-ml="500">
-                                    <i data-lucide="cup-soda"></i> Bottle (500ml)
+                                <button class="water-add-btn" data-ml="500">
+                                    <i data-lucide="plus"></i> 500ML
                                 </button>
-                                <button class="btn btn-secondary water-add-btn" data-ml="1000">
-                                    <i data-lucide="cup-soda"></i> 1L
+                                <button class="water-add-btn" data-ml="1000">
+                                    <i data-lucide="plus"></i> 1.0L
                                 </button>
                             </div>
 
