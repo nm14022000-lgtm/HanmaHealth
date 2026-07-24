@@ -531,6 +531,8 @@ function initBottomNav() {
                 updateHomeDashboard();
             } else if (targetId === "tab-nutrition") {
                 updateNutritionTab();
+            } else if (targetId === "tab-hydration") {
+                updateHydrationTab();
             } else if (targetId === "tab-progress") {
                 renderCalendar();
                 updateProgressTab();
@@ -1116,7 +1118,6 @@ function updateNutritionTab() {
     document.getElementById("macro-fat-val").textContent = `${Math.round(fat)}g / ${targetFat}g`;
 
     renderLoggedFoods();
-    renderWaterTracker();
 }
 
 // -------------------------------------------------------------
@@ -1141,6 +1142,76 @@ function calculateWaterTargetMl() {
     const exerciseBonus = exerciseMinutes * WATER_ML_PER_EXERCISE_MIN;
 
     return Math.round(base + exerciseBonus + WATER_CLIMATE_BONUS_ML);
+}
+
+function updateHydrationTab() {
+    renderWaterTracker();
+    renderWaterCalcBreakdown();
+    renderWaterHistory();
+}
+
+function renderWaterCalcBreakdown() {
+    const baseEl = document.getElementById("calc-water-base");
+    const exerciseEl = document.getElementById("calc-water-exercise");
+    const climateEl = document.getElementById("calc-water-climate");
+    const totalEl = document.getElementById("calc-water-total");
+    if (!baseEl) return;
+
+    const weight = (state.userProfile && state.userProfile.weight) ? state.userProfile.weight : 70;
+    const log = state.dailyLogs[selectedDate];
+    const exerciseMinutes = log ? sumWorkoutsDuration(log) : 0;
+
+    const base = Math.round(weight * WATER_ML_PER_KG);
+    const exerciseBonus = Math.round(exerciseMinutes * WATER_ML_PER_EXERCISE_MIN);
+    const total = base + exerciseBonus + WATER_CLIMATE_BONUS_ML;
+
+    baseEl.textContent = `${base} ml`;
+    exerciseEl.textContent = `+${exerciseBonus} ml`;
+    climateEl.textContent = `+${WATER_CLIMATE_BONUS_ML} ml`;
+    totalEl.textContent = `${total} ml`;
+}
+
+function renderWaterHistory() {
+    const container = document.getElementById("water-history-list");
+    const countLabel = document.getElementById("water-history-count");
+    if (!container) return;
+
+    const dates = Object.keys(state.dailyLogs)
+        .filter(d => state.dailyLogs[d].water && state.dailyLogs[d].water > 0)
+        .sort((a, b) => b.localeCompare(a));
+
+    countLabel.textContent = `${dates.length} day${dates.length === 1 ? '' : 's'} logged`;
+
+    if (dates.length === 0) {
+        container.innerHTML = `<div class="dh-empty">No hydration logged yet. Add water above to start your history.</div>`;
+        return;
+    }
+
+    container.innerHTML = dates.map(dateStr => {
+        const consumed = state.dailyLogs[dateStr].water;
+        // Approximate that day's target using today's profile/weight (weight-based, so a
+        // reasonable reference even though we don't store a per-day snapshot of the target).
+        const weight = (state.userProfile && state.userProfile.weight) ? state.userProfile.weight : 70;
+        const exerciseMinutes = sumWorkoutsDuration(state.dailyLogs[dateStr]);
+        const target = Math.round(weight * WATER_ML_PER_KG + exerciseMinutes * WATER_ML_PER_EXERCISE_MIN + WATER_CLIMATE_BONUS_ML);
+        const pct = Math.min(100, Math.round((consumed / target) * 100));
+        const metClass = pct >= 100 ? "dh-net-good" : "dh-net-over";
+
+        return `
+            <div class="dh-item">
+                <div class="dh-header">
+                    <span class="dh-date">${formatHumanReadableDate(dateStr)}</span>
+                    <span class="dh-net-badge ${metClass}">${pct}% of goal</span>
+                </div>
+                <div class="dh-stat-block">
+                    <div class="dh-stat-label"><i data-lucide="droplet"></i> Water Intake</div>
+                    <div class="dh-stat-value">${consumed} / ${target} ml</div>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    initLucideIcons();
 }
 
 function renderWaterTracker() {
@@ -1189,6 +1260,23 @@ function initWaterTrackerListeners() {
         reminderToggle.addEventListener("click", toggleWaterReminders);
     }
 
+    document.querySelectorAll(".interval-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+            const mins = parseInt(pill.dataset.mins, 10);
+            if (isNaN(mins)) return;
+            state.settings.waterReminders.intervalMinutes = mins;
+            saveState();
+            document.querySelectorAll(".interval-pill").forEach(p => p.classList.toggle("active", p === pill));
+            updateWaterReminderStatusUI();
+        });
+    });
+
+    // Reflect the saved interval choice in the pill row
+    const savedMins = state.settings.waterReminders.intervalMinutes || 120;
+    document.querySelectorAll(".interval-pill").forEach(p => {
+        p.classList.toggle("active", parseInt(p.dataset.mins, 10) === savedMins);
+    });
+
     updateWaterReminderStatusUI();
 }
 
@@ -1236,7 +1324,8 @@ function updateWaterReminderStatusUI() {
     if (!statusEl) return;
 
     const enabled = state.settings.waterReminders.enabled;
-    statusEl.textContent = enabled ? "Reminders on — every 2 hours while this app is open" : "Reminders off";
+    const hrs = (state.settings.waterReminders.intervalMinutes || 120) / 60;
+    statusEl.textContent = enabled ? `Reminders on — every ${hrs} hour${hrs === 1 ? '' : 's'} while this app is open` : "Reminders off";
     if (btnIcon) {
         btnIcon.setAttribute("data-lucide", enabled ? "bell-ring" : "bell-off");
         initLucideIcons();
@@ -1257,7 +1346,11 @@ function startWaterReminderTimer() {
         const intervalMs = (settings.intervalMinutes || 120) * 60 * 1000;
 
         if (withinWakingHours && elapsedMs >= intervalMs && Notification.permission === "granted") {
-            new Notification("Time to hydrate 💧", { body: "It's been a while — drink some water and log it in Hanma Gym." });
+            const log = state.dailyLogs[selectedDate];
+            const consumed = log ? (log.water || 0) : 0;
+            const target = calculateWaterTargetMl();
+            const pct = Math.min(100, Math.round((consumed / target) * 100));
+            new Notification("Time to hydrate 💧", { body: `You've completed ${pct}% of today's water goal (${consumed}/${target}ml). Drink some water and log it!` });
             settings.lastNotifiedAt = Date.now();
             saveState();
         }
