@@ -1144,21 +1144,28 @@ function calculateWaterTargetMl() {
 }
 
 function renderWaterTracker() {
-    const fillEl = document.getElementById("water-bar-fill");
+    const ledRow = document.getElementById("water-led-row");
     const consumedEl = document.getElementById("water-consumed-val");
     const targetEl = document.getElementById("water-target-val");
-    if (!fillEl || !consumedEl || !targetEl) return;
+    if (!ledRow || !consumedEl || !targetEl) return;
 
     const log = state.dailyLogs[selectedDate];
     const consumed = log ? (log.water || 0) : 0;
     const target = calculateWaterTargetMl();
-    const pct = Math.min(100, Math.round((consumed / target) * 100));
+    const fraction = Math.min(1, consumed / target);
 
-    fillEl.style.width = `${pct}%`;
+    const totalBlocks = 8;
+    const filledBlocks = Math.round(fraction * totalBlocks);
+
+    ledRow.innerHTML = "";
+    for (let i = 0; i < totalBlocks; i++) {
+        const block = document.createElement("div");
+        block.className = "water-led-block" + (i < filledBlocks ? " filled" : "");
+        ledRow.appendChild(block);
+    }
+
     consumedEl.textContent = consumed;
     targetEl.textContent = target;
-
-    fillEl.classList.toggle("goal-met", consumed >= target);
 }
 
 function addWaterMl(ml) {
