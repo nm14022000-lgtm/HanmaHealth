@@ -2,31 +2,34 @@
 
 :root {
     color-scheme: dark;
-    --bg-main: #000000;
-    --bg-surface: #0a0a0a;
-    --bg-card: #121212;
-    --bg-card-hover: #1c1c1e;
+    --bg-main: #06090e;
+    --bg-surface: #0a0f18;
+    --bg-card: rgba(13, 19, 28, 0.85);
+    --bg-card-hover: rgba(19, 27, 38, 0.9);
     --border-color: rgba(255, 255, 255, 0.08);
     
     /* Text Colors */
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-    --text-muted: #52525b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
 
-    /* Theme Accents (Default: Lime Green Gym Mode) */
-    --primary: #84cc16; 
-    --primary-hover: #a3e635;
-    --primary-glow: rgba(132, 204, 22, 0.25);
+    /* Theme Accents — cyber/neon (matches the Hanma Gym reference build) */
+    --primary: #00ff88;
+    --primary-hover: #33ffa2;
+    --primary-glow: rgba(0, 255, 136, 0.3);
     
-    --secondary: #6366f1; 
-    --secondary-glow: rgba(99, 102, 241, 0.2);
+    --secondary: #ff5e00;
+    --secondary-glow: rgba(255, 94, 0, 0.4);
+
+    --cyan: #00f2fe;
+    --cyan-glow: rgba(0, 242, 254, 0.3);
 
     /* Stats colors */
-    --orange: #fe552b;
-    --orange-glow: rgba(254, 85, 43, 0.28);
+    --orange: #ff5e00;
+    --orange-glow: rgba(255, 94, 0, 0.4);
     --yellow: #ffc700;
     --purple: #a855f7;
-    --blue: #0ea5e9;
+    --blue: #00f2fe;
     
     --success: #10b981;
     --success-bg: rgba(16, 185, 129, 0.08);
@@ -34,11 +37,53 @@
     --danger: #ef4444;
     --danger-bg: rgba(239, 68, 68, 0.08);
 
-    --font-family: 'Outfit', sans-serif;
-    --font-display: 'Tilt Warp', 'Outfit', sans-serif;
-    --font-heading: 'Amaranth', 'Outfit', sans-serif;
-    --radius-chunky: 22px;
+    --font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', system-ui, sans-serif;
+    --font-display: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-heading: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --radius-chunky: 16px;
     --sidebar-width: 260px;
+}
+
+/* Cyber grid background overlay (from the reference build) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-size: 32px 32px;
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.app-layout { position: relative; z-index: 1; }
+
+/* Glow utilities (from the reference build) */
+.glow-primary { box-shadow: 0 0 20px var(--primary-glow), inset 0 0 10px var(--primary-glow); }
+.glow-orange { box-shadow: 0 0 20px var(--orange-glow), inset 0 0 10px var(--orange-glow); }
+.glow-cyan { box-shadow: 0 0 15px var(--cyan-glow); }
+
+@keyframes pingDot {
+    75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.pulse-dot {
+    position: relative;
+    display: inline-flex;
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+.pulse-dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: currentColor;
+    animation: pingDot 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 /* Demon Mode Override */
@@ -382,6 +427,13 @@ p {
     font-weight: 600;
 }
 
+.user-greeting .name {
+    font-style: italic;
+    text-transform: uppercase;
+    color: var(--cyan);
+    letter-spacing: 0.01em;
+}
+
 .divider {
     height: 1px;
     background: var(--border-color);
@@ -504,6 +556,9 @@ p {
     border-radius: var(--radius-chunky);
     padding: 1.5rem;
     height: 100%;
+    backdrop-filter: blur(12px);
+    position: relative;
+    z-index: 1;
 }
 
 .card-title-row {
@@ -726,14 +781,17 @@ p {
 
 .section-tag {
     display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     width: fit-content;
     font-family: var(--font-heading);
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-weight: 700;
     color: var(--primary);
-    letter-spacing: 0.06em;
-    background-color: rgba(132, 204, 22, 0.12);
-    border: 1px solid rgba(132, 204, 22, 0.25);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background-color: var(--primary-glow);
+    border: 1px solid rgba(0, 255, 136, 0.3);
     padding: 0.3rem 0.75rem;
     border-radius: 20px;
     margin-bottom: 0.5rem;
@@ -1637,52 +1695,89 @@ p {
     padding: 1.5rem 0;
 }
 
-/* Water Intake Tracker */
-.water-progress-row {
+/* Water Intake Tracker — segmented LED style (matches reference build) */
+.water-volume-counter {
     display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    margin-bottom: 1rem;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
 }
 
-.water-bar-track {
-    flex-grow: 1;
-    height: 14px;
-    background-color: rgba(14, 165, 233, 0.1);
-    border: 1px solid rgba(14, 165, 233, 0.2);
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.water-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-    border-radius: 20px;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.water-bar-fill.goal-met {
-    background: linear-gradient(90deg, var(--primary), var(--primary-hover));
-}
-
-.water-progress-text {
-    font-size: 0.85rem;
-    font-weight: 700;
+.water-volume-counter strong {
+    font-size: 1.9rem;
+    font-weight: 800;
     color: var(--text-primary);
-    white-space: nowrap;
+}
+
+.water-volume-counter span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.water-led-row {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.4rem;
+    margin: 1rem 0;
+}
+
+.water-led-block {
+    height: 12px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.06);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.water-led-block.filled {
+    background-color: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan-glow);
+    animation: blockPulse 2s infinite ease-in-out;
+}
+
+@keyframes blockPulse {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 1; filter: drop-shadow(0 0 6px currentColor); }
 }
 
 .water-quick-add-row {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
 }
 
-.water-quick-add-row .btn {
+.water-add-btn {
     flex: 1;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.55rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
     white-space: nowrap;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 242, 254, 0.35);
+    background-color: rgba(0, 242, 254, 0.08);
+    color: var(--cyan);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.water-add-btn i {
+    width: 0.7rem;
+    height: 0.7rem;
+}
+
+.water-add-btn:hover {
+    background-color: var(--cyan);
+    color: #000;
+}
+
+.water-add-btn:active {
+    transform: scale(0.96);
 }
 
 /* Account & Cloud Sync (Profile Tab) */
