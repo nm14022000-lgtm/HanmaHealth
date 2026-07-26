@@ -1,0 +1,120 @@
+Redesign Hanma Health into a world-class premium health and nutrition platform.
+
+Design Goal:
+Create a modern, animated, highly polished, App Store featured-quality interface comparable to Apple Health, Levels Health, WHOOP, Fitbit Premium, and Linear.
+
+Style:
+- Premium dark theme
+- Glassmorphism + subtle neumorphism
+- Emerald green accent (#22c55e)
+- Deep charcoal backgrounds
+- Soft gradients
+- Professional medical aesthetic
+- Clean typography
+- High-end startup feel
+- Not generic Tailwind template
+
+Visual Language:
+- Floating glass cards
+- Layered depth
+- Smooth shadows
+- Animated gradients
+- Micro interactions
+- Premium charts
+- Smooth hover states
+- Skeleton loading states
+- Smooth page transitions
+
+Animations:
+- Framer Motion everywhere
+- Staggered card entrances
+- Count-up animations
+- Animated progress rings
+- Floating background particles
+- Scroll-triggered reveals
+- Liquid progress effects
+- Smooth tab transitions
+- Spring-based interactions
+- Magnetic buttons
+
+Layout:
+Desktop:
+- Collapsible premium sidebar
+- Fixed top navigation
+- Dashboard grid system
+- Bento card layout
+
+Mobile:
+- Native app feel
+- Bottom navigation
+- Floating action button
+- Smooth gestures
+
+Dashboard:
+- Hero section with personalized greeting
+- Daily calorie progress ring
+- Water intake widget
+- Weight trend chart
+- Macro distribution donut chart
+- Daily streak card
+- Goal completion status
+
+Nutrition Page:
+- Beautiful food search experience
+- Search suggestions
+- Food image thumbnails
+- Macro breakdown cards
+- Animated nutrition insights
+- Meal timeline view
+- Add food modal with animations
+- Daily calorie gauge
+
+Charts:
+- Apple Health style charts
+- Smooth line graphs
+- Interactive tooltips
+- Animated chart rendering
+- Weekly/monthly/yearly views
+
+Premium Features UI:
+- AI Nutrition Coach section
+- Smart recommendations
+- Goal prediction cards
+- Health score dashboard
+- Nutrition insights engine
+
+Background:
+- Animated mesh gradient
+- Subtle glow effects
+- Floating abstract shapes
+- Very low opacity medical patterns
+
+Components:
+- Custom buttons
+- Premium inputs
+- Animated toggles
+- Glass dropdowns
+- Floating labels
+- Beautiful modals
+
+Technology:
+- React
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Recharts
+- Lucide Icons
+
+Performance:
+- Smooth 60fps animations
+- Optimized rendering
+- Lazy loading
+- Responsive everywhere
+
+IMPORTANT:
+Avoid looking like a template.
+Avoid generic fitness dashboards.
+Avoid excessive neon cyberpunk style.
+
+Target:
+A product that looks capable of raising venture capital and competing with premium international health startups.

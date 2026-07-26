@@ -16,19 +16,23 @@ function AppShell() {
   useWaterReminders();
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex h-screen overflow-hidden bg-bg-main">
       <Sidebar active={tab} onChange={setTab} />
-      <main className="flex-1 px-4 py-6 md:px-10 md:py-8 max-w-[1400px] w-full mx-auto">
-        <AnimatePresence mode="wait">
-          <PageTransition key={tab}>
-            {tab === "home" && <DashboardPage onNavigate={setTab} />}
-            {tab === "workouts" && <WorkoutsPage />}
-            {tab === "nutrition" && <NutritionPage />}
-            {tab === "hydration" && <HydrationPage />}
-            {tab === "progress" && <ProgressPage />}
-            {tab === "profile" && <ProfilePage />}
-          </PageTransition>
-        </AnimatePresence>
+
+      {/* Main scrollable content area */}
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="max-w-[1320px] w-full mx-auto px-6 py-8 md:px-10 md:py-10">
+          <AnimatePresence mode="wait">
+            <PageTransition key={tab}>
+              {tab === "home" && <DashboardPage onNavigate={setTab} />}
+              {tab === "workouts" && <WorkoutsPage />}
+              {tab === "nutrition" && <NutritionPage />}
+              {tab === "hydration" && <HydrationPage />}
+              {tab === "progress" && <ProgressPage />}
+              {tab === "profile" && <ProfilePage />}
+            </PageTransition>
+          </AnimatePresence>
+        </div>
       </main>
     </div>
   );

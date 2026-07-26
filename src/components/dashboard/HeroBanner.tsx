@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { PlayCircle } from "lucide-react";
+import { PlayCircle, Zap } from "lucide-react";
 import type { Routine } from "@/data/routineDatabase";
 
 interface HeroBannerProps {
@@ -9,19 +9,29 @@ interface HeroBannerProps {
 
 export function HeroBanner({ routine, onStart }: HeroBannerProps) {
   return (
-    <div className="relative rounded-chunky overflow-hidden min-h-[280px] flex items-end p-8 bg-[radial-gradient(circle_at_15%_15%,rgba(0,255,136,0.28)_0%,transparent_45%),linear-gradient(160deg,#0e1607_0%,#060806_55%,#030303_100%)]">
-      <span className="absolute -top-[0.4em] left-[-0.03em] text-[5.5rem] font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.08)] select-none pointer-events-none z-0">
+    <div
+      className="relative rounded-2xl overflow-hidden min-h-[220px] flex items-end p-6"
+      style={{
+        background:
+          "radial-gradient(ellipse at 15% 30%, rgba(34,197,94,0.18) 0%, transparent 55%), linear-gradient(160deg, #0e1a14 0%, #0b0f0d 50%, #0a0c10 100%)",
+        border: "1px solid rgba(34,197,94,0.15)",
+      }}
+    >
+      {/* Background label */}
+      <span className="absolute -top-[0.3em] left-[-0.02em] text-[5rem] font-black leading-none text-transparent select-none pointer-events-none z-0"
+        style={{ WebkitTextStroke: "1px rgba(255,255,255,0.04)" }}>
         POWER
       </span>
 
+      {/* Animated figure */}
       <motion.svg
         viewBox="0 0 400 320"
-        className="absolute right-[-1rem] bottom-0 h-[92%] w-auto max-w-[62%] z-[1] opacity-90"
-        animate={{ y: [0, -8, 0] }}
+        className="absolute right-[-0.5rem] bottom-0 h-[88%] w-auto max-w-[55%] z-[1] opacity-80"
+        animate={{ y: [0, -6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
-        <g stroke="#00ff88" strokeLinecap="round" fill="none" opacity="0.9">
-          <circle cx="112" cy="58" r="23" fill="#00ff88" stroke="none" />
+        <g stroke="#22c55e" strokeLinecap="round" fill="none" opacity="0.85">
+          <circle cx="112" cy="58" r="23" fill="#22c55e" stroke="none" />
           <path d="M112,81 L112,98" strokeWidth="14" />
           <path d="M112,98 C108,130 106,160 106,188" strokeWidth="32" />
           <path d="M106,188 L92,300" strokeWidth="19" />
@@ -29,7 +39,7 @@ export function HeroBanner({ routine, onStart }: HeroBannerProps) {
           <path d="M128,108 L154,146 L138,178" strokeWidth="15" />
           <path d="M94,108 L66,138 L94,155" strokeWidth="15" />
         </g>
-        <g strokeLinecap="round" fill="none" opacity="0.55">
+        <g strokeLinecap="round" fill="none" opacity="0.35">
           <circle cx="292" cy="54" r="20" fill="#fff" stroke="none" />
           <path d="M306,44 Q328,40 320,68" stroke="#fff" strokeWidth="9" />
           <path d="M292,75 L292,90" stroke="#fff" strokeWidth="12" />
@@ -43,35 +53,43 @@ export function HeroBanner({ routine, onStart }: HeroBannerProps) {
         </g>
       </motion.svg>
 
-      <div className="absolute inset-0 z-[1] bg-[linear-gradient(to_top,rgba(0,0,0,0.9)_25%,rgba(0,0,0,0.15)_100%),linear-gradient(to_right,rgba(0,0,0,0.55)_0%,transparent_55%)]" />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 z-[1]"
+        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.05) 100%), linear-gradient(to right, rgba(0,0,0,0.5) 0%, transparent 60%)" }} />
 
+      {/* Content */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15, duration: 0.5 }}
+        transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full"
       >
-        <span className="inline-flex items-center gap-1.5 text-[0.62rem] font-bold uppercase tracking-wide text-primary bg-primary/10 border border-primary/30 px-3 py-1 rounded-full mb-2">
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-current">
+        <span className="badge-emerald mb-2 inline-flex">
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-current">
             <span className="absolute inset-0 rounded-full bg-current animate-ping-dot" />
           </span>
           Today's Workout
         </span>
-        <h3 className="text-3xl font-black text-white mt-1">{routine.name}</h3>
-        <p className="text-text-secondary text-sm mt-1">{routine.muscles}</p>
-        <div className="flex gap-5 text-xs text-text-secondary mt-2 mb-4">
-          <span>{routine.exercises.length} Exercises</span>
-          <span>{routine.duration} mins</span>
+        <h3 className="text-2xl font-bold text-white mt-1.5 tracking-tight">{routine.name}</h3>
+        <p className="text-text-secondary text-sm mt-0.5">{routine.muscles}</p>
+        <div className="flex gap-4 text-xs text-text-muted mt-1.5 mb-4">
+          <span>{routine.exercises.length} exercises</span>
+          <span>{routine.duration} min</span>
         </div>
         <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.96 }}
+          whileHover={{ scale: 1.03, boxShadow: "0 0 28px rgba(34,197,94,0.35)" }}
+          whileTap={{ scale: 0.97 }}
           onClick={onStart}
-          className="inline-flex items-center gap-2 bg-primary text-black font-bold px-6 py-3 rounded-xl shadow-glow-primary"
+          className="inline-flex items-center gap-2 bg-primary text-black text-sm font-bold px-5 py-2.5 rounded-xl shadow-glow-primary transition-shadow"
         >
           <PlayCircle className="w-4 h-4" /> Start Workout
         </motion.button>
       </motion.div>
+
+      {/* Top-right sparkle */}
+      <div className="absolute top-4 right-4 z-10">
+        <Zap className="w-4 h-4 text-primary/40" />
+      </div>
     </div>
   );
 }
