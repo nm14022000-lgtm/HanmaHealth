@@ -16,7 +16,9 @@
 
   body {
     position: relative;
-    min-height: 100vh;
+    /* dvh accounts for iOS Safari's collapsible address bar */
+    min-height: 100dvh;
+    min-height: 100vh; /* fallback for older browsers */
   }
 
   /* Subtle mesh pattern */

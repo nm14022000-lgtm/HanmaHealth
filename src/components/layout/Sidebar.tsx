@@ -85,10 +85,10 @@ export function Sidebar({ active, onChange }: SidebarProps) {
         </div>
       </nav>
 
-      {/* Mobile sticky top bar */}
-      <nav className="md:hidden sticky top-0 z-40 flex items-center gap-0.5 overflow-x-auto px-2 h-[56px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      {/* Mobile top nav bar — first child in flex-col layout, naturally at top */}
+      <nav className="md:hidden z-40 flex items-center gap-0.5 overflow-x-auto px-2 h-[56px] shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
-          background: "rgba(11,12,16,0.95)",
+          background: "rgba(11,12,16,0.97)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           backdropFilter: "blur(20px)",
         }}
