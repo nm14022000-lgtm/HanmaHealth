@@ -3,22 +3,29 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Configuration is loaded from environment variables so that
+// credentials are never hardcoded in source code or the compiled
+// JS bundle.
+//
+// Local dev:  copy .env.example → .env.local and fill in values.
+// Replit:     set each VITE_FIREBASE_* key in Tools → Secrets.
+// Vercel:     add each key in Project → Settings → Environment Variables.
 const firebaseConfig = {
-  apiKey: "AIzaSyBgRosqcgOxIZP5nGcCqMOljY1RQZGA8o4",
-  authDomain: "hanmahealth-cbfe6.firebaseapp.com",
-  projectId: "hanmahealth-cbfe6",
-  storageBucket: "hanmahealth-cbfe6.firebasestorage.app",
-  messagingSenderId: "540316272873",
-  appId: "1:540316272873:web:7314cf08de0d2fdce44878",
-  measurementId: "G-G6YZGTTLJ7",
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
 
-// Analytics can fail quietly in some environments (ad-blockers, etc.) —
-// never let it block the app.
+// Analytics can fail quietly in some environments (ad-blockers,
+// Safari ITP, server-side rendering) — never let it block the app.
 isSupported()
   .then((supported) => {
     if (supported) getAnalytics(firebaseApp);
