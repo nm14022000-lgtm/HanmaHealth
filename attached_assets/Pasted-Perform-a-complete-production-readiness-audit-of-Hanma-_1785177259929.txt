@@ -1,0 +1,181 @@
+Perform a complete production readiness audit of Hanma Health.
+
+Website:
+https://hanma-health.vercel.app
+
+Objective:
+Act as a senior QA engineer, senior product manager, senior frontend engineer, and startup product auditor.
+
+Audit every page, feature, workflow, and mobile experience.
+
+========================
+FUNCTIONAL TESTING
+========================
+
+Check:
+
+1. Authentication
+- Google Login
+- Logout
+- Session persistence
+- User-specific data isolation
+
+2. Dashboard
+- Calorie goal calculations
+- Progress rings
+- Charts
+- Daily summary cards
+- Goal completion
+
+3. Nutrition
+- Food search
+- Food filtering
+- Food logging
+- Meal assignment
+- Calorie calculation
+- Macro calculation
+- Add/remove food
+- Daily totals
+- Data persistence after refresh
+
+4. Hydration
+- Water intake logging
+- Daily reset
+- Progress calculations
+- Notifications
+- Reminder scheduling
+- Mobile notification support
+- Data persistence
+
+5. Weight Tracking
+- Add weight
+- Weight history
+- Graph rendering
+- Progress calculations
+- Goal weight calculations
+
+6. Calculators
+- BMI
+- BMR
+- TDEE
+- Calorie deficit
+- Goal recommendations
+
+7. Profile
+- User settings
+- Goal settings
+- Activity level
+- Data saving
+
+========================
+MOBILE AUDIT
+========================
+
+Test on:
+
+- iPhone Safari
+- Android Chrome
+
+Check:
+
+- Responsive layouts
+- Overflow issues
+- Hidden content
+- Broken animations
+- Text clipping
+- Touch targets
+- Scrolling
+- Safe area support
+- Bottom navigation
+- Dynamic viewport issues
+
+========================
+DATA AUDIT
+========================
+
+Check:
+
+- Food database structure
+- Missing fields
+- Inconsistent serving sizes
+- Duplicate foods
+- Missing macro values
+- Invalid calorie calculations
+- Data validation gaps
+
+========================
+UX AUDIT
+========================
+
+Identify:
+
+- Confusing workflows
+- Missing empty states
+- Missing loading states
+- Missing success messages
+- Missing error messages
+- Poor user journeys
+
+========================
+PERFORMANCE AUDIT
+========================
+
+Check:
+
+- Unnecessary rerenders
+- Large bundles
+- Slow page loads
+- Memory leaks
+- Animation performance
+- Mobile performance
+
+========================
+SECURITY AUDIT
+========================
+
+Check:
+
+- Firebase rules
+- Exposed secrets
+- Client-side vulnerabilities
+- Local storage issues
+
+========================
+PRODUCTION READINESS
+========================
+
+Verify existence of:
+
+- Privacy Policy
+- Terms & Conditions
+- Medical Disclaimer
+- Error Boundaries
+- Analytics
+- Crash Handling
+
+========================
+OUTPUT FORMAT
+========================
+
+Generate a detailed report with:
+
+CRITICAL ISSUES
+HIGH PRIORITY ISSUES
+MEDIUM PRIORITY ISSUES
+LOW PRIORITY ISSUES
+
+For every issue include:
+
+- Problem
+- Root Cause
+- Impact
+- Exact File(s)
+- Recommended Fix
+
+Finally provide:
+
+1. Launch Readiness Score /100
+2. Commercial Readiness Score /100
+3. User Retention Score /100
+4. Top 10 Features Missing Before Launch
+5. Exact Roadmap to Reach Production Ready Status
